@@ -3,7 +3,7 @@ import  userModel from '../models/user.model.js'
 import * as userService from '../services/user.service.js';
 import { validationResult } from 'express-validator';
 import redisClient from '../services/redis.server.js';
-import { all } from 'axios';
+
 
 
 export const createUserController = async (req, res, next) => {

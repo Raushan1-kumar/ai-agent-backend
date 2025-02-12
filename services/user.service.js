@@ -1,7 +1,5 @@
-import { hash } from 'bcrypt';
+
 import userModel from '../models/user.model.js'
-
-
 
 
 

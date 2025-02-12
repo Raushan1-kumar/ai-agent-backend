@@ -5,6 +5,7 @@ import userModel from '../models/user.model.js';
 
 
 
+
 export const createProject = async (req, res)=>{
     const errors= validationResult(req);
 
@@ -33,8 +34,6 @@ catch (error) {
     });
 }
 }
-
-
 
 export const getAllProject= async(req, res)=>{
     const errors= validationResult(req);
@@ -85,7 +84,6 @@ export const addUserToProject = async(req, res) => {
         const userId = loggedInUser._id;
         const { users, projectId } = req.body; // Expecting an array of users from the frontend
         console.log(req.body.users);
-    
         if (!users || !Array.isArray(users)) {
             return res.status(400).json({
                 msg: "users array is required"
@@ -114,7 +112,6 @@ export const addUserToProject = async(req, res) => {
         });
     }
 }
-
 
 export const getAllUsers = async(req, res)=>{
     const errors= validationResult(req);
@@ -146,7 +143,6 @@ export const getAllUsers = async(req, res)=>{
         })
     }
 }
-
 
 export const updateFileTree = async (req, res) => {
     const errors = validationResult(req);

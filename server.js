@@ -71,30 +71,40 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('project-message', async(data) => {
+    socket.on('project-message', async (data) => {
         console.log("Received project-message:", data);
         
         if (!data.projectId) {
             console.error("Error: Missing projectId in message data");
             return;
         }
-         const message = data.message
-         const aiIsPresendInMessage = message.includes('@ai');
-        io.to(data.projectId).emit('project-message', data); // Send to all clients in the room
-        if(aiIsPresendInMessage){
-            const prompt = message.replace('@ai','');
-            const result = await generateResult(prompt);
-
-            io.to(data.projectId).emit('project-message', {
-               sender: 'Ai',
-               message: result // Question first, new line, then result
-           });
-           
-
-           return;
+    
+        const message = data.message;
+        const aiIsPresentInMessage = message.includes('@ai');
+    
+        // Send the user message to all clients first
+        io.to(data.projectId).emit('project-message', data);
+    
+        // If AI is mentioned, generate a response
+        if (aiIsPresentInMessage) {
+            try {
+                const prompt = message.replace('@ai', '').trim();
+                const result = await generateResult(prompt); // Call AI service
+    
+                io.to(data.projectId).emit('project-message', {
+                    sender: 'Ai',
+                    message: result?.error || result // Return either the AI response or an error message
+                });
+            } catch (error) {
+                console.error("AI Service Error:", error);
+                io.to(data.projectId).emit('project-message', {
+                    sender: 'Ai',
+                    message: "I'm currently unavailable. Please try again later."
+                });
+            }
         }
     });
-
+    
     socket.on('disconnect', () => {
         console.log('User disconnected');
         socket.leave(socket.projectId); // Remove user from the room

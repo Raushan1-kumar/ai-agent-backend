@@ -44,8 +44,6 @@ userSchema.methods.generateAuthToken = function() {
     return token;
 };
 
-
-
 const Second = mongoose.model('Second', userSchema);
 
 export default Second

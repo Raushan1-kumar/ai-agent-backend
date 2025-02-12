@@ -74,10 +74,9 @@ export const getAllUsers = async ({projectId})=>{
         throw new Error("Invalid project ID");
     }
     const project = await projectModel.findById(projectId);
+    
       return project.users;
 }
-
-
 
 
 export const updateFileTree = async ({ projectId, fileTree }) => {
