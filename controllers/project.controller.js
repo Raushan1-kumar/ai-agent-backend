@@ -20,8 +20,8 @@ try{
     console.log(req.user.email)
     const loggedInUser = await userModel.findOne({email:req.user.email});
     const userId = loggedInUser._id;
-
-    const newProject = await projectService.createProject({name, userId});
+   const email = req.user.email;
+    const newProject = await projectService.createProject({name, email});
     res.status(200).json({
         msg:"new project added ",
         project:newProject
@@ -47,6 +47,7 @@ export const getAllProject= async(req, res)=>{
     try{
         const loggedInUser = await userModel.findOne({email:req.user.email});
         const userId = loggedInUser._id;
+        const email= req.user.email;
         console.log(userId);
       if(!userId){
         res.status(400).json({
@@ -54,7 +55,7 @@ export const getAllProject= async(req, res)=>{
         })
       }  
 
-    const allProject = await projectService.getAllProject({userId})
+    const allProject = await projectService.getAllProject({email})
     res.status(200).json({
         msg:"all project are fetched ",
         projects:allProject,
@@ -82,6 +83,7 @@ export const addUserToProject = async(req, res) => {
     try {
         const loggedInUser = await userModel.findOne({ email: req.user.email });
         const userId = loggedInUser._id;
+        const email= req.user.email;
         const { users, projectId } = req.body; // Expecting an array of users from the frontend
         console.log(req.body.users);
         if (!users || !Array.isArray(users)) {
@@ -96,9 +98,9 @@ export const addUserToProject = async(req, res) => {
             });
         }
 
-        console.log(userId);
-        const updatedProject = await projectService.addUsersToProject({ users, projectId, userId });
-        console.log(updatedProject);
+        console.log(` line 99 controller ${userId}`);
+        const updatedProject = await projectService.addUsersToProject({ users, projectId, email });
+        console.log('line 101 controller ');
 
         res.status(200).json({
             msg: "Users added to project",

@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 
 
 export const createProject = async({
-    name, userId
+    name, email
 })=>{
     if(!name){
         throw new Error('Name is required');
         
     }
-    if(!userId){
-        throw new Error("userId is required");
+    if(!email){
+        throw new Error("email is required");
     }
 
     const existingProject = await projectModel.findOne({ name });
@@ -20,53 +20,60 @@ export const createProject = async({
 
     const project = await projectModel.create({
         name,
-        users: [userId]
+        users: [email]
     });
 
-
+    console.log("new project created");
     return project;
 }
 
 export const getAllProject = async({
-    userId
+    email
 })=>{
-    if(!userId){
-        throw new Error("userId is required");
+    if(!email){
+        throw new Error("email is required");
     }
 
-    const allProject = await projectModel.find({users:userId})
+    const allProject = await projectModel.find({users:email})
 
     return allProject;
 
 }
 
-
-export const addUsersToProject = async({
-    users, projectId, userId
-})=>{
-
-    if (!Array.isArray(users) || users.some(user => !mongoose.Types.ObjectId.isValid(user))) {
-        throw new Error("Invalid user IDs");
+export const addUsersToProject = async ({ users, projectId, email }) => {
+    if (!Array.isArray(users) || users.length === 0) {
+        throw new Error("Users must be a non-empty array");
     }
-    if(!projectId){   
-        throw new Error("projectId is required");
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        throw new Error("Invalid projectId");
     }
 
-    const project = await projectModel.findOne({ _id: projectId, users: userId });
+    const project = await projectModel.findOne({ _id: projectId, users: email });
+    console.log("line 56 service", project);
+
     if (!project) {
-        throw new Error('Project not found or user is not authenticated');
+        throw new Error("Project not found or user is not authenticated");
     }
 
-    const newUsers = users.filter(user => user !== userId && !project.users.includes(user));
-    if (newUsers.length === 0) {
-        throw new Error('All users are already added to the project');
-    }
+    // Convert user IDs to ObjectId and filter unique ones
+    const newUsers = users
+        .filter(user => user !== email && !project.users.includes(user));
+    console.log("line 62 service", newUsers);
 
-    project.users.push(...newUsers);
-    await project.save();
+    // if (newUsers.length === 0) {
+    //     throw new Error("All users are already added to the project");
+    // }
 
-    return project;
-}
+    // Use $addToSet to ensure only unique users are added
+    await projectModel.updateOne(
+        { _id: projectId },
+        { $addToSet: { users: { $each: newUsers } } }
+    );
+
+    console.log("line 69 service");
+    return await projectModel.findById(projectId); // Return updated project
+};
+
 
 
 export const getAllUsers = async ({projectId})=>{

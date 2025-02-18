@@ -9,8 +9,7 @@ const projectSchema = new mongoose.Schema({
         unique:true,
     },
     users:[{
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'Second'
+        type:String,
     }],
     fileTree: {
         type: Object,
