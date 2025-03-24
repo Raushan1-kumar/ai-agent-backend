@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 export const createProject = async({
     name, email
 })=>{
+    console.log(name, email);
     if(!name){
         throw new Error('Name is required');
         

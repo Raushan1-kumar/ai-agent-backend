@@ -2,7 +2,7 @@
 import  userModel from '../models/user.model.js'
 import * as userService from '../services/user.service.js';
 import { validationResult } from 'express-validator';
-import redisClient from '../services/redis.server.js';
+
 
 
 
@@ -85,7 +85,7 @@ export const logOutUser = async(req, res, next)=>{
         })
     }
 
-    redisClient.set(token, 'logout', 'EX', 60*60 *24);
+
     
     res.status(200).json({
         msg:"logout successfully"

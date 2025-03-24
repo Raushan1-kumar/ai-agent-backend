@@ -16,8 +16,8 @@ const model = genAI.getGenerativeModel({
 
         Examples:
         <example>
-        user:hi
-        response:Hii How can i help you !
+        user:hi or personal questions or greetings or any question or any input
+        response:{message: Hii How can i help you ! or according to user input}
         </example>
         <example>
         user: Create an Express application or any command or may be html code or python code or react component or c code follow below format
@@ -51,7 +51,7 @@ const model = genAI.getGenerativeModel({
 export const generateResult = async (prompt) => {
   try {
     const result = await model.generateContent(prompt);
-    const responseText = await result.response.text(); // Get AI response as text
+    const responseText =  result.response.text(); // Get AI response as text
     console.log("🔥 Raw AI Response:", responseText); // Log full response
 
     // Ensure the response is valid JSON
